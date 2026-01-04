@@ -1,23 +1,23 @@
 package main
 
 import (
-	"net/http"
-
+	"github.com/RiosHectorM/last-mile-go/internal/logistics" // Ajustá a tu usuario de GitHub
 	"github.com/gin-gonic/gin"
 )
 
 func main() {
-	// 1. Inicializamos el motor de Gin
 	router := gin.Default()
 
-	// 2. Definimos una ruta básica de prueba
+	// Ruta de salud
 	router.GET("/ping", func(c *gin.Context) {
-		c.JSON(http.StatusOK, gin.H{
-			"message": "¡Sistema de logística activo!",
-			"status":  "ok",
-		})
+		c.JSON(200, gin.H{"status": "ok"})
 	})
 
-	// 3. Arrancamos el servidor en el puerto 8080
+	// Agrupamos las rutas de logística
+	v1 := router.Group("/api/v1")
+	{
+		v1.POST("/packages", logistics.CreatePackageHandler)
+	}
+
 	router.Run(":8080")
 }
