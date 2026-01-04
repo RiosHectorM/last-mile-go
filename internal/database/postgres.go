@@ -25,3 +25,18 @@ func GetConnection() (*sql.DB, error) {
 
 	return sql.Open("postgres", connStr)
 }
+
+func Migraciones(db *sql.DB) error {
+	query := `
+	CREATE TABLE IF NOT EXISTS packages (
+		id SERIAL PRIMARY KEY,
+		tracking_code TEXT UNIQUE NOT NULL,
+		receiver_name TEXT NOT NULL,
+		destination TEXT NOT NULL,
+		weight DOUBLE PRECISION,
+		status TEXT,
+		created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+	);`
+	_, err := db.Exec(query)
+	return err
+}

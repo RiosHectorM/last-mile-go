@@ -1,29 +1,29 @@
 package logistics
 
 import (
-	"net/http"
-	"time"
+	"database/sql"
 
 	"github.com/gin-gonic/gin"
 )
 
 // CreatePackageHandler maneja la recepción de nuevos paquetes
-func CreatePackageHandler(c *gin.Context) {
-	var newPkg Package
+func CreatePackageHandler(db *sql.DB) gin.HandlerFunc {
+	return func(c *gin.Context) {
+		var p Package
+		if err := c.ShouldBindJSON(&p); err != nil {
+			c.JSON(400, gin.H{"error": err.Error()})
+			return
+		}
 
-	// Intentamos volcar el JSON que viene en la petición a nuestra estructura
-	if err := c.ShouldBindJSON(&newPkg); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Datos de envío inválidos"})
-		return
+		query := `INSERT INTO packages (tracking_code, receiver_name, destination, weight, status) 
+				  VALUES ($1, $2, $3, $4, $5) RETURNING id`
+
+		err := db.QueryRow(query, p.TrackingCode, p.ReceiverName, p.Destination, p.Weight, "pending").Scan(&p.ID)
+		if err != nil {
+			c.JSON(500, gin.H{"error": "Error al guardar en DB: " + err.Error()})
+			return
+		}
+
+		c.JSON(201, p)
 	}
-
-	// Simulamos que le asignamos un ID y fecha (esto luego lo hará la DB)
-	newPkg.ID = "PKG-12345"
-	newPkg.CreatedAt = time.Now()
-	newPkg.Status = "pending"
-
-	c.JSON(http.StatusCreated, gin.H{
-		"message": "Paquete registrado en el sistema",
-		"data":    newPkg,
-	})
 }

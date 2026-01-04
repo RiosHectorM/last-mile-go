@@ -13,6 +13,7 @@ func main() {
 	if err != nil {
 		panic(fmt.Sprintf("No se pudo conectar a la DB: %v", err))
 	}
+	database.Migraciones(db)
 	defer db.Close()
 	router := gin.Default()
 
@@ -24,7 +25,7 @@ func main() {
 	// Agrupamos las rutas de logística
 	v1 := router.Group("/api/v1")
 	{
-		v1.POST("/packages", logistics.CreatePackageHandler)
+		v1.POST("/packages", logistics.CreatePackageHandler(db))
 	}
 
 	router.Run(":8080")
