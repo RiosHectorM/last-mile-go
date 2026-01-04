@@ -1,11 +1,19 @@
 package main
 
 import (
+	"fmt"
+
+	"github.com/RiosHectorM/last-mile-go/internal/database"
 	"github.com/RiosHectorM/last-mile-go/internal/logistics" // Ajustá a tu usuario de GitHub
 	"github.com/gin-gonic/gin"
 )
 
 func main() {
+	db, err := database.GetConnection()
+	if err != nil {
+		panic(fmt.Sprintf("No se pudo conectar a la DB: %v", err))
+	}
+	defer db.Close()
 	router := gin.Default()
 
 	// Ruta de salud
