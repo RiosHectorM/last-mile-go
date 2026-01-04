@@ -1,29 +1,41 @@
 package logistics
 
 import (
-	"database/sql"
+	"net/http"
 
 	"github.com/gin-gonic/gin"
 )
 
-// CreatePackageHandler maneja la recepción de nuevos paquetes
-func CreatePackageHandler(db *sql.DB) gin.HandlerFunc {
-	return func(c *gin.Context) {
-		var p Package
-		if err := c.ShouldBindJSON(&p); err != nil {
-			c.JSON(400, gin.H{"error": err.Error()})
-			return
-		}
+type Handler struct {
+	service *Service
+}
 
-		query := `INSERT INTO packages (tracking_code, receiver_name, destination, weight, status) 
-				  VALUES ($1, $2, $3, $4, $5) RETURNING id`
+func NewHandler(s *Service) *Handler {
+	return &Handler{service: s}
+}
 
-		err := db.QueryRow(query, p.TrackingCode, p.ReceiverName, p.Destination, p.Weight, "pending").Scan(&p.ID)
-		if err != nil {
-			c.JSON(500, gin.H{"error": "Error al guardar en DB: " + err.Error()})
-			return
-		}
-
-		c.JSON(201, p)
+func (h *Handler) CreatePackage(c *gin.Context) {
+	var p Package
+	if err := c.ShouldBindJSON(&p); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
 	}
+
+	if err := h.service.CreatePackage(&p); err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusCreated, p)
+}
+
+func (h *Handler) GetPackage(c *gin.Context) {
+	id := c.Param("id") // Sacamos el ID de la URL
+	p, err := h.service.GetPackage(id)
+	if err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "Paquete no encontrado"})
+		return
+	}
+
+	c.JSON(http.StatusOK, p)
 }
