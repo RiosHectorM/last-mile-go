@@ -1,0 +1,13 @@
+# Ejecutables de Go
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+main
+
+# Variables de entorno (seguridad)
+.env
+
+# Docker
+.docker/
