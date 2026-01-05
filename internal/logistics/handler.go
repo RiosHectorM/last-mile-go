@@ -39,3 +39,18 @@ func (h *Handler) GetPackage(c *gin.Context) {
 
 	c.JSON(http.StatusOK, p)
 }
+
+func (h *Handler) GetAllPackages(c *gin.Context) {
+	pkgs, err := h.service.GetAllPackages()
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Error al obtener la lista"})
+		return
+	}
+
+	// Si la lista está vacía, devolvemos un array vacío [] en lugar de null
+	if pkgs == nil {
+		pkgs = []Package{}
+	}
+
+	c.JSON(http.StatusOK, pkgs)
+}

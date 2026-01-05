@@ -33,3 +33,23 @@ func (r *Repository) GetByID(id string) (*Package, error) {
 	}
 	return p, nil
 }
+
+func (r *Repository) GetAll() ([]Package, error) {
+	query := `SELECT id, tracking_code, receiver_name, destination, weight, status, created_at FROM packages`
+	
+	rows, err := r.db.Query(query)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var packages []Package
+	for rows.Next() {
+		var p Package
+		if err := rows.Scan(&p.ID, &p.TrackingCode, &p.ReceiverName, &p.Destination, &p.Weight, &p.Status, &p.CreatedAt); err != nil {
+			return nil, err
+		}
+		packages = append(packages, p)
+	}
+	return packages, nil
+}

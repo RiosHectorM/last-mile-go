@@ -31,3 +31,7 @@ func (s *Service) CreatePackage(p *Package) error {
 func (s *Service) GetPackage(id string) (*Package, error) {
 	return s.repo.GetByID(id)
 }
+
+func (s *Service) GetAllPackages() ([]Package, error) {
+	return s.repo.GetAll()
+}
