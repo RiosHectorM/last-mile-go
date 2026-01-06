@@ -53,3 +53,9 @@ func (r *Repository) GetAll() ([]Package, error) {
 	}
 	return packages, nil
 }
+
+func (r *Repository) UpdateStatus(id string, status string) error {
+	query := `UPDATE packages SET status = $1 WHERE id = $2`
+	_, err := r.db.Exec(query, status, id)
+	return err
+}

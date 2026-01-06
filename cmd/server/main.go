@@ -32,6 +32,7 @@ func main() {
 		api.POST("/packages", handler.CreatePackage)
 		api.GET("/packages/:id", handler.GetPackage)
 		api.GET("/packages", handler.GetAllPackages)
+		api.PUT("/packages/:id/status", handler.UpdateStatus)
 	}
 
 	fmt.Println("🚀 Servidor corriendo en el puerto 8080")

@@ -1,0 +1,22 @@
+
+
+POST http://localhost:8080/api/v1/packages HTTP/1.1
+content-type: application/json
+
+{
+    "receiver_name": "Linux",
+    "destination": "BS AS, Argentina",
+    "weight": 152
+}
+
+###
+
+GET http://localhost:8080/api/v1/packages HTTP/1.1
+content-type: application/json
+
+###
+PUT http://localhost:8080/api/v1/packages/2/status HTTP/1.1
+
+{
+    "status": "in_transit"
+}

@@ -54,3 +54,22 @@ func (h *Handler) GetAllPackages(c *gin.Context) {
 
 	c.JSON(http.StatusOK, pkgs)
 }
+
+func (h *Handler) UpdateStatus(c *gin.Context) {
+	id := c.Param("id")
+	var body struct {
+		Status string `json:"status"`
+	}
+
+	if err := c.ShouldBindJSON(&body); err != nil {
+		c.JSON(400, gin.H{"error": "JSON inválido"})
+		return
+	}
+
+	if err := h.service.UpdatePackageStatus(id, body.Status); err != nil {
+		c.JSON(500, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.JSON(200, gin.H{"message": "Estado actualizado correctamente"})
+}

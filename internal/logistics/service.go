@@ -35,3 +35,19 @@ func (s *Service) GetPackage(id string) (*Package, error) {
 func (s *Service) GetAllPackages() ([]Package, error) {
 	return s.repo.GetAll()
 }
+
+func (s *Service) UpdatePackageStatus(id string, status string) error {
+	// Validación básica de estados de logística
+	valid := false
+	for _, s := range []string{"pending", "in_transit", "delivered", "canceled"} {
+		if s == status {
+			valid = true
+			break
+		}
+	}
+	if !valid {
+		return fmt.Errorf("estado no válido: %s", status)
+	}
+
+	return s.repo.UpdateStatus(id, status)
+}
