@@ -51,3 +51,7 @@ func (s *Service) UpdatePackageStatus(id string, status string) error {
 
 	return s.repo.UpdateStatus(id, status)
 }
+
+func (s *Service) DeletePackage(id string) error {
+	return s.repo.Delete(id)
+}

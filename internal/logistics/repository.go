@@ -59,3 +59,9 @@ func (r *Repository) UpdateStatus(id string, status string) error {
 	_, err := r.db.Exec(query, status, id)
 	return err
 }
+
+func (r *Repository) Delete(id string) error {
+	query := `DELETE FROM packages WHERE id = $1`
+	_, err := r.db.Exec(query, id)
+	return err
+}

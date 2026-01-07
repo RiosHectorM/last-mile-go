@@ -73,3 +73,12 @@ func (h *Handler) UpdateStatus(c *gin.Context) {
 
 	c.JSON(200, gin.H{"message": "Estado actualizado correctamente"})
 }
+
+func (h *Handler) DeletePackage(c *gin.Context) {
+	id := c.Param("id")
+	if err := h.service.DeletePackage(id); err != nil {
+		c.JSON(500, gin.H{"error": "No se pudo eliminar el paquete"})
+		return
+	}
+	c.JSON(200, gin.H{"message": "Paquete eliminado exitosamente"})
+}
