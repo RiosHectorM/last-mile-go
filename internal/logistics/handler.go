@@ -17,7 +17,10 @@ func NewHandler(s *Service) *Handler {
 func (h *Handler) CreatePackage(c *gin.Context) {
 	var p Package
 	if err := c.ShouldBindJSON(&p); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error":   "Faltan campos obligatorios",
+			"details": err.Error(),
+		})
 		return
 	}
 

@@ -4,9 +4,9 @@ POST http://localhost:8080/api/v1/packages HTTP/1.1
 content-type: application/json
 
 {
-    "receiver_name": "Linux",
-    "destination": "BS AS, Argentina",
-    "weight": 152
+    "receiver_name": "CC",
+    "destination": "CC",
+    "weight": 5
 }
 
 ###
@@ -15,8 +15,12 @@ GET http://localhost:8080/api/v1/packages HTTP/1.1
 content-type: application/json
 
 ###
-PUT http://localhost:8080/api/v1/packages/2/status HTTP/1.1
+PUT http://localhost:8080/api/v1/packages/5/status HTTP/1.1
 
 {
     "status": "in_transit"
 }
+
+### Borrar un registro por ID
+DELETE http://localhost:8080/api/v1/packages/7
+Content-Type: application/json
