@@ -36,22 +36,36 @@ func (s *Service) GetAllPackages() ([]Package, error) {
 	return s.repo.GetAll()
 }
 
-func (s *Service) UpdatePackageStatus(id string, status string) error {
-	// Validación básica de estados de logística
-	valid := false
-	for _, s := range []string{"pending", "in_transit", "delivered", "canceled"} {
-		if s == status {
-			valid = true
-			break
-		}
-	}
-	if !valid {
-		return fmt.Errorf("estado no válido: %s", status)
-	}
-
-	return s.repo.UpdateStatus(id, status)
-}
-
 func (s *Service) DeletePackage(id string) error {
 	return s.repo.Delete(id)
+}
+
+func (s *Service) UpdatePackageStatus(id string, newStatus string) error {
+	// 1. Buscamos el paquete actual para saber en qué estado está
+	currentPkg, err := s.repo.GetByID(id)
+	if err != nil {
+		return err // El repo ya devuelve "not found" si no existe
+	}
+
+	// 2. Validamos la lógica de negocio
+	switch currentPkg.Status {
+	case StatusPending:
+		if newStatus != StatusInTransit {
+			return fmt.Errorf("un paquete pendiente solo puede pasar a 'in_transit'")
+		}
+	case StatusInTransit:
+		if newStatus != StatusDelivered {
+			return fmt.Errorf("un paquete en tránsito solo puede pasar a 'delivered'")
+		}
+	case StatusDelivered:
+		return fmt.Errorf("el paquete ya fue entregado y no puede cambiar de estado")
+	default:
+		// Por si viene un estado que no conocemos
+		if newStatus != StatusPending && newStatus != StatusInTransit && newStatus != StatusDelivered {
+			return fmt.Errorf("estado no válido: %s", newStatus)
+		}
+	}
+
+	// 3. Si pasó las reglas, recién ahí llamamos al repo
+	return s.repo.UpdateStatus(id, newStatus)
 }

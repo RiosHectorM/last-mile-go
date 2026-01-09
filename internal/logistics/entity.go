@@ -12,3 +12,10 @@ type Package struct {
 	Status       string    `json:"status"` // "pending", "in_transit", "delivered"
 	CreatedAt    time.Time `json:"created_at"`
 }
+
+// Estados de los paquetes
+const (
+	StatusPending   = "pending"
+	StatusInTransit = "in_transit"
+	StatusDelivered = "delivered"
+)

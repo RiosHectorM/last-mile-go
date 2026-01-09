@@ -15,10 +15,9 @@ GET http://localhost:8080/api/v1/packages HTTP/1.1
 content-type: application/json
 
 ###
-PUT http://localhost:8080/api/v1/packages/5/status HTTP/1.1
-
+PUT http://localhost:8080/api/v1/packages/3/status HTTP/1.1
 {
-    "status": "in_transit"
+    "status": "delivered"
 }
 
 ### Borrar un registro por ID
